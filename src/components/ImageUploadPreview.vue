@@ -44,16 +44,22 @@
 <script lang="ts" setup>
 import { ref, watch, defineEmits } from "vue";
 
+export interface FileWithPreview extends File {
+  preview?: string;
+}
+
 const props = defineProps<{
-  files: File[];
+  files: (File | FileWithPreview)[];
   existingUrls?: string[];
 }>();
 
 const emit = defineEmits<{
-  (e: "update:files", files: File[]): void;
+  (e: "update:files", files: FileWithPreview[]): void;
 }>();
 
-const files = ref<File[]>(props.files || []);
+const files = ref<FileWithPreview[]>(
+  (props.files || []) as FileWithPreview[]
+);
 const existingUrls = ref<string[]>(props.existingUrls || []);
 // Watch props changes
 watch(
@@ -74,8 +80,9 @@ const handleFiles = (e: Event) => {
   const target = e.target as HTMLInputElement;
   if (target.files) {
     const newFiles = Array.from(target.files).map((file) => {
-      (file as any).preview = URL.createObjectURL(file);
-      return file;
+      const fileWithPreview: FileWithPreview = file as FileWithPreview;
+      fileWithPreview.preview = URL.createObjectURL(file);
+      return fileWithPreview;
     });
     files.value = [...files.value, ...newFiles];
     emit("update:files", files.value);
@@ -85,7 +92,9 @@ const handleFiles = (e: Event) => {
 // Remove new file
 const removeFile = (index: number) => {
   const removed = files.value.splice(index, 1)[0];
-  URL.revokeObjectURL((removed as any).preview);
+  if (removed && removed.preview) {
+    URL.revokeObjectURL(removed.preview);
+  }
   emit("update:files", files.value); // อัพเดตให้ parent ด้วย
 };
 
