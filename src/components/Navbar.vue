@@ -20,13 +20,13 @@
         </span>
         <router-link
           to="/Dashboard"
-          class="text-gray-700 border-b-2 border-transparent hover:border-blue-600 transition duration-200"
+          class="inline-flex items-center px-4 py-2 text-gray-700 border-b-2 border-transparent hover:border-blue-600 transition duration-200 rounded-lg"
         >
           Dashboard
         </router-link>
         <button
           @click="auth.logout"
-          class="text-gray-700 hover:bg-gray-200 transition duration-200 rounded-lg"
+          class="inline-flex items-center justify-center px-4 py-2 text-white bg-red-500 hover:bg-red-600 transition duration-200 rounded-lg shadow-sm"
         >
           Logout
         </button>
